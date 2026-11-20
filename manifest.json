@@ -7,9 +7,9 @@
     "base": "V0073"
   },
   "app": {
-    "versao": "2026.11.20.19",
-    "url": "https://github.com/amauriweirich/reforma-tributaria-uniplus-instaladores/releases/download/app-2026.11.20.19/app.zip",
-    "sha256": "d13d7a5e2c0d3cfb0c33ccd811c1819e7b5e824ffc2d02c010f698745609006e",
-    "tamanho": 27807153
+    "versao": "2026.11.20.20",
+    "url": "https://github.com/amauriweirich/reforma-tributaria-uniplus-instaladores/releases/download/app-2026.11.20.20/app.zip",
+    "sha256": "8380a353a183487b5538efd882f388b54188fa9b7328364b2ff75af6118b14f8",
+    "tamanho": 27818056
   }
 }
