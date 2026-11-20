@@ -5,5 +5,11 @@
     "sha256": "9041b6038886dc3d586fe887e60e36904346cad814d64054016925d466d89968",
     "tamanho": 162029856,
     "base": "V0073"
+  },
+  "app": {
+    "versao": "2026.11.20.11",
+    "url": "https://github.com/amauriweirich/reforma-tributaria-uniplus-instaladores/releases/download/app-2026.11.20.11/app.zip",
+    "sha256": "a658894040ed96458f4fb9b853ecca0d6248dce4d07171124c6e6c5e48c4e462",
+    "tamanho": 27773858
   }
 }
