@@ -1,0 +1,67 @@
+name: Motor oficial
+# Todo dia: se a Receita publicou versão nova da calculadora ou do gerador de DANFSe,
+# compila para Windows, junta o Java e publica como versão "motor-*".
+on:
+  schedule:
+    - cron: "47 9 * * *"   # 06:47 em Brasília
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  motor:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Versões publicadas pela Receita
+        id: v
+        run: |
+          rr=$(gh api "repos/ReceitaFederal/calculadora-rtc-regime-regular/releases?per_page=1" --jq '.[0].tag_name')
+          dan=$(gh api "repos/ReceitaFederal/calculadora-rtc-gerador-danfse/releases?per_page=1" --jq '.[0].tag_name')
+          versao="rr${rr}-dan${dan}"
+          echo "rr=$rr" >> "$GITHUB_OUTPUT"; echo "dan=$dan" >> "$GITHUB_OUTPUT"; echo "versao=$versao" >> "$GITHUB_OUTPUT"
+          if gh release view "motor-$versao" >/dev/null 2>&1; then echo "existe=sim" >> "$GITHUB_OUTPUT"; echo "motor-$versao já publicado"; fi
+      - uses: actions/setup-java@v4
+        if: steps.v.outputs.existe != 'sim'
+        with:
+          distribution: temurin
+          java-version: "25"
+      - name: Calculadora do regime regular (jar e base de dados)
+        if: steps.v.outputs.existe != 'sim'
+        run: |
+          git clone -q --depth 1 --branch "${{ steps.v.outputs.rr }}" https://github.com/ReceitaFederal/calculadora-rtc-regime-regular.git rr
+          cd rr && mkdir -p calculadora/db
+          ./mvnw -B -q flyway:migrate -Dflyway.configFiles=./flyway/flyway-pro.conf
+          ./mvnw -B -q -DskipTests clean package
+          ls -la target/*.jar calculadora/db
+      - uses: actions/setup-go@v5
+        if: steps.v.outputs.existe != 'sim'
+        with:
+          go-version: "1.27"
+      - name: Gerador de DANFSe para Windows
+        if: steps.v.outputs.existe != 'sim'
+        run: |
+          git clone -q --depth 1 --branch "${{ steps.v.outputs.dan }}" https://github.com/ReceitaFederal/calculadora-rtc-gerador-danfse.git dan
+          cd dan && GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o danfse.exe ./cmd/danfse
+      - name: Montar e publicar
+        if: steps.v.outputs.existe != 'sim'
+        run: |
+          set -e
+          mkdir -p motor/regime-regular motor/calculadora/db motor/danfse
+          curl -sSL -o jre.zip "https://api.adoptium.net/v3/binary/latest/25/ga/windows/x64/jre/hotspot/normal/eclipse"
+          unzip -q jre.zip -d jre-tmp && mv jre-tmp/* motor/jre
+          cp "$(ls rr/target/*.jar | grep -v -e sources -e original | head -1)" motor/regime-regular/calculadora.jar
+          cp rr/calculadora/db/calculadora-pro.db motor/calculadora/db/
+          cp dan/danfse.exe motor/danfse/
+          base=$(sqlite3 motor/calculadora/db/calculadora-pro.db "select VRBD_VERSAO_BASE_DADO from VERSAO_BASE_DADO order by VRBD_ID desc limit 1")
+          versao="${{ steps.v.outputs.versao }}"
+          printf '{"versao":"%s","regime_regular":"%s","danfse":"%s","base":"%s"}\n' "$versao" "${{ steps.v.outputs.rr }}" "${{ steps.v.outputs.dan }}" "$base" > motor/versao.json
+          (cd motor && zip -qr ../motor.zip .)
+          hash=$(sha256sum motor.zip | cut -d' ' -f1); tam=$(stat -c %s motor.zip)
+          gh release create "motor-$versao" motor.zip --title "Motor oficial $versao (base $base)" --notes "Calculadora do regime regular ${{ steps.v.outputs.rr }}, gerador de DANFSe ${{ steps.v.outputs.dan }}, base de dados $base, Java Temurin JRE 25."
+          url="https://github.com/${{ github.repository }}/releases/download/motor-$versao/motor.zip"
+          git pull -q
+          jq --arg v "$versao" --arg u "$url" --arg h "$hash" --argjson t "$tam" --arg b "$base" '.motor = {versao:$v, url:$u, sha256:$h, tamanho:$t, base:$b}' manifest.json > m.tmp && mv m.tmp manifest.json
+          git config user.name "publicador"; git config user.email "actions@users.noreply.github.com"
+          git add manifest.json && git commit -q -m "motor $versao" && git push -q
