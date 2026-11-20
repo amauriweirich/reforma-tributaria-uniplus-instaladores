@@ -6,6 +6,7 @@ Arquivos prontos para instalação e atualização do aplicativo. Não contém c
 - Versões (Releases): `app-*` é o aplicativo; `motor-*` é o motor oficial de cálculo.
 
 O motor é montado aqui a partir dos repositórios públicos da Receita Federal (licença MIT):
-[calculadora-rtc-regime-regular](https://github.com/ReceitaFederal/calculadora-rtc-regime-regular) e
+[calculadora-rtc-regime-regular](https://github.com/ReceitaFederal/calculadora-rtc-regime-regular),
+[calculadora-rtc-simples-nacional](https://github.com/ReceitaFederal/calculadora-rtc-simples-nacional) e
 [calculadora-rtc-gerador-danfse](https://github.com/ReceitaFederal/calculadora-rtc-gerador-danfse),
 com o Java Eclipse Temurin (JRE 25).
