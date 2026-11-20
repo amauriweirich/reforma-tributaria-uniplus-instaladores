@@ -1,1 +1,9 @@
-{}
+{
+  "motor": {
+    "versao": "rr1.7.2-dan1.0.0",
+    "url": "https://github.com/amauriweirich/reforma-tributaria-uniplus-instaladores/releases/download/motor-rr1.7.2-dan1.0.0/motor.zip",
+    "sha256": "9041b6038886dc3d586fe887e60e36904346cad814d64054016925d466d89968",
+    "tamanho": 162029856,
+    "base": "V0073"
+  }
+}
