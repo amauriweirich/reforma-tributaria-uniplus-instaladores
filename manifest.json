@@ -1,10 +1,10 @@
 {
   "motor": {
-    "versao": "rr1.7.2-sn1.0.2-dan1.0.0",
-    "url": "https://github.com/amauriweirich/reforma-tributaria-uniplus-instaladores/releases/download/motor-rr1.7.2-sn1.0.2-dan1.0.0/motor.zip",
-    "sha256": "69b1a710f4c287589735819c4440fc9dadf49142f1fdae9b09714ccb60c13816",
-    "tamanho": 239774724,
-    "base": "V0073"
+    "versao": "rr1.7.3-sn1.0.2-dan1.0.0",
+    "url": "https://github.com/amauriweirich/reforma-tributaria-uniplus-instaladores/releases/download/motor-rr1.7.3-sn1.0.2-dan1.0.0/motor.zip",
+    "sha256": "c333e144b142c04bc9a5dac8b19c876962dc3e890f5b9f5ce43a419e924170d8",
+    "tamanho": 239774598,
+    "base": "V0074"
   },
   "app": {
     "versao": "2026.11.21.24",
